@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./api/Dockerfile
+    restart: always
+    tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    command: pnpm start:dev
+  app:
+    build:
+      context: .
+      dockerfile: ./app/Dockerfile
+    restart: always
+    tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    command: pnpm dev
+  db:
+    image: mysql:8.0
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: blog_service
+      MYSQL_ROOT_PASSWORD: MnMr0043
+    volumes:
+      - ./db/data:/var/lib/mysql
